@@ -6,11 +6,15 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"os"
 	"strings"
 )
 
 func main() {
-	port := flag.String("p", "80", "需要代理的端口")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 	reverseUrl := flag.String("r", "https://raw.githubusercontent.com", "需要代理的地址")
 	flag.Parse()
 
@@ -23,9 +27,9 @@ func main() {
 		remote: remote,
 	})
 
-	log.Println("当前代理地址： " + *reverseUrl + " 本地监听： http://0.0.0.0:" + *port)
+	log.Println("当前代理地址： " + *reverseUrl + " 本地监听： http://0.0.0.0:" + port)
 
-	serveErr := http.ListenAndServe("0.0.0.0:"+*port, proxy)
+	serveErr := http.ListenAndServe("0.0.0.0:"+port, proxy)
 
 	if serveErr != nil {
 		panic(serveErr)
